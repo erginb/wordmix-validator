@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Web3 from 'web3';
 import './App.css'
+import detectEthereumProvider from '@metamask/detect-provider';
+
+
 
 function App() {
   const [account, setAccount] = useState('');
@@ -35,11 +38,35 @@ function App() {
 			}
 		]
 
+  // useEffect(() => {
+  //   if(window.ethereum) {
+  //     window.ethereum.on('chainChanged', () => {
+  //       window.location.reload();
+  //     })
+  //     window.ethereum.on('accountsChanged', () => {
+  //       window.location.reload();
+  //     })
+  //   }
+  // })
+
   async function connectMetamask() {
+    // let ethereum;
+    // ethereum = await detectEthereumProvider();
+    // var result = await ethereum.request({ method: 'eth_requestAccounts' });
+
     if (window.ethereum) {
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' })
+      if(chainId != 8082){
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: "0x1F92" }]
+        })
+      }
       const web3 = new Web3(window.ethereum);
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       setAccount(accounts[0]);
+      const ID = await web3.eth.net.getId();
+      console.log({ID})
     } else {
       alert('Please install MetaMask to use this dApp!');
     }
@@ -58,14 +85,14 @@ function App() {
   }
 
   return (
-    <div class="card">
+    <div className="card">
       <button onClick={connectMetamask}>Connect Metamask</button>
       <p>Account: {account.slice(0,4)}...{account.slice(38)}</p>
       <div>
 
-    <label class="input">
+    <label className="input">
         <input
-        class="input__field"
+        className="input__field"
           type="text"
           placeholder="Target string"
           value={targetString}
@@ -73,9 +100,9 @@ function App() {
           style={{marginBottom: "10px"}}
         />
         </label>
-        <label class="input">
+        <label className="input">
         <input
-        class="input__field"
+        className="input__field"
           type="text"
           placeholder="Word list (comma-separated)"
           value={wordList}
