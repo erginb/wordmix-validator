@@ -7,7 +7,7 @@ function App() {
   const [targetString, setTargetString] = useState('');
   const [wordList, setWordList] = useState('');
 
-  const contractAddress = "0x0A377795f2F069fc28B5cac4E04D9948Dfb07Ba9"
+  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS
   const ABI = [
 			{
 				"inputs": [
